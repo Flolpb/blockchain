@@ -32,20 +32,22 @@ class Block:
                 return True
         return False
 
-    def add_transaction(self, w1, w2, montant):
+    def add_transaction(self, w1, w2, montant, name):
         w1.sub_balance(montant)
         w2.add_balance(montant)
-        new_transactions = {'emetteur': w1.unique_id, 'recepteur': "w2.unique_id", 'montant': montant}
+        new_transactions = {'emetteur': w1.unique_id, 'recepteur': w2.unique_id, 'montant': montant, 'name': name}
         self.last_transaction = new_transactions
         self.transactions.append(new_transactions)
         self.save()
         self.get_weight()
         self.save()
 
-    def get_transaction(self):
-        with open("content/blocs/" + self.hash + ".json") as json_file:
-            data = json.load(json_file)
-            self.transactions = data['transactions']
+    def get_transaction(self, name):
+        for i in range(len(self.transactions)):
+            x = self.transactions[i]['name'].find(name)
+            if x != -1:
+                return self
+        return None
 
     def get_weight(self):
         self.size = os.path.getsize("content/blocs/" + self.hash + ".json")
@@ -59,11 +61,12 @@ class Block:
                 'last_transaction': self.last_transaction,
                 'transactions': []
             }
-            for i in range(len(data['transactions'])):
+            for i in range(len(self.transactions)):
                 data['transactions'].append({
                     'emetteur': self.transactions[i]['emetteur'],
                     'recepteur': self.transactions[i]['recepteur'],
-                    'montant': self.transactions[i]['montant']
+                    'montant': self.transactions[i]['montant'],
+                    'name': self.transactions[i]['name']
                 })
 
             json.dump(data, outfile)

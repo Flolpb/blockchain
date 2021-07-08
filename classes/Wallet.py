@@ -1,6 +1,7 @@
 import os
 import uuid
 import json
+import settings
 
 
 class Wallet:
@@ -20,16 +21,34 @@ class Wallet:
 
     def add_balance(self, balance):
         self.balance += balance
+        self.save()
 
     def sub_balance(self, balance):
         self.balance -= balance
+        self.save()
 
-    def send(self, recepteur, montant, bloc):
-        bloc.add_transaction(self, recepteur, montant)
+    def send(self, recepteur, montant, bloc, name):
+        bloc.add_transaction(self, recepteur, montant, name)
+        new_transaction = {'emetteur': self.unique_id, 'recepteur': recepteur.unique_id, 'montant': montant, 'name': name}
+        self.history.append(new_transaction)
+        self.save()
 
     def save(self):
         with open("content/wallets/" + self.unique_id + ".json", 'w') as outfile:
-            data = {'unique_id': self.unique_id, 'balance': self.balance, 'history': self.history}
+            data = {
+                'unique_id': self.unique_id,
+                'balance': self.balance,
+                'history': []
+            }
+
+            for i in range(len(self.history)):
+                data['history'].append({
+                    'emetteur': self.history[i]['emetteur'],
+                    'recepteur': self.history[i]['recepteur'],
+                    'montant': self.history[i]['montant'],
+                    'name': self.history[i]['name'],
+                })
+
             json.dump(data, outfile)
 
     def load(self, unique_id):
