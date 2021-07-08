@@ -43,12 +43,30 @@ class Block:
 
     def save(self):
         with open("content/blocs/" + self.hash + ".json", 'w') as outfile:
-            data = {'hash': self.hash, 'balance': self.balance, 'history': self.history}
+            data = {
+                'hash': self.hash,
+                'size': self.size,
+                'parent_hash': self.parent_hash,
+                'last_transaction': self.last_transaction
+            }
             json.dump(data, outfile)
 
     def load(self, hash):
         with open("content/blocs/" + hash + ".json") as json_file:
             data = json.load(json_file)
-            self.unique_id = data['unique_id']
-            self.balance = data['balance']
-            self.history = data['history']
+            self.hash = data['hash']
+            self.parent_hash = data['parent_hash']
+            self.size = data['size']
+            self.last_transaction = data['last_transaction']
+
+    def add_block(self):
+        new_block = Block(parent_hash=self.hash)
+        self.blocks.append(new_block)
+        new_block.save()
+        print("saved")
+
+    def get_block(self, hash):
+        b = Block()
+        b.load(hash)
+        if b.parent_hash == self.hash:
+            self.blocks.append(b)
