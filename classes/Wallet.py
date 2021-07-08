@@ -24,8 +24,8 @@ class Wallet:
     def sub_balance(self, balance):
         self.balance -= balance
 
-    def send(self):
-        pass
+    def send(self, recepteur, montant, bloc):
+        bloc.add_transaction(self, recepteur, montant)
 
     def save(self):
         with open("content/wallets/" + self.unique_id + ".json", 'w') as outfile:

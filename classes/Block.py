@@ -12,6 +12,7 @@ class Block:
         self.hash = self.generate_hash()
         self.parent_hash = parent_hash
         self.blocks = []
+        self.transactions = []
         self.last_transaction = None
 
     def generate_hash(self):
@@ -34,9 +35,17 @@ class Block:
     def add_transaction(self, w1, w2, montant):
         w1.sub_balance(montant)
         w2.add_balance(montant)
+        new_transactions = {'emetteur': w1.unique_id, 'recepteur': "w2.unique_id", 'montant': montant}
+        self.last_transaction = new_transactions
+        self.transactions.append(new_transactions)
+        self.save()
+        self.get_weight()
+        self.save()
 
     def get_transaction(self):
-        pass
+        with open("content/blocs/" + self.hash + ".json") as json_file:
+            data = json.load(json_file)
+            self.transactions = data['transactions']
 
     def get_weight(self):
         self.size = os.path.getsize("content/blocs/" + self.hash + ".json")
@@ -47,8 +56,16 @@ class Block:
                 'hash': self.hash,
                 'size': self.size,
                 'parent_hash': self.parent_hash,
-                'last_transaction': self.last_transaction
+                'last_transaction': self.last_transaction,
+                'transactions': []
             }
+            for i in range(len(data['transactions'])):
+                data['transactions'].append({
+                    'emetteur': self.transactions[i]['emetteur'],
+                    'recepteur': self.transactions[i]['recepteur'],
+                    'montant': self.transactions[i]['montant']
+                })
+
             json.dump(data, outfile)
 
     def load(self, hash):
@@ -58,6 +75,7 @@ class Block:
             self.parent_hash = data['parent_hash']
             self.size = data['size']
             self.last_transaction = data['last_transaction']
+            self.transactions = data['transactions']
 
     def add_block(self):
         new_block = Block(parent_hash=self.hash)
