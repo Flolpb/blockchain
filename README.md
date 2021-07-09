@@ -19,6 +19,7 @@ cliquer sur ce lien qui indique comment installer git : https://git-scm.com/book
 
 ensuite ouvrez une invite de commande et rendez vous dans le dossier ou vous voulez importer le projet
 une fois que vous êtes dans le dossier tapez ces instructions : 
+
 $ git clone https://github.com/Flolpb/blockchain.git
 $ cd blockchain
 
@@ -31,6 +32,7 @@ J'ai fais en sorte que vous ayez de l'interaction avec mon programme pour tester
 les différentes classes de mon programme en respectant le barème.
 Lancer le programme et essayer toute sorte de réponses / d'erreur.
 Voici une liste des id des blocs et des id des wallets à essayer:
+
 blocs:
 - 00
 - 1000fc6e1d5e15a38c12ab6ed8d325bbeeec1d7e581bff9525cbf3c6a064e809
