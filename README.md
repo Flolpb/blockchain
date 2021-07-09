@@ -50,4 +50,6 @@ et le nom des fichiers est leur id donc essayer les blocs/wallets que vous venez
 
 essayer aussi de faire une transaction avec des wallets inexistants et vous obtiendrez une erreur.
 
+Vous pouvez aussi tenter de faire des transactions avec des sommes au dessus du solde d'un wallet et vous verrez qu'il y aura aussi une erreur
+
 Merci d'avoir essayé mon programme !
