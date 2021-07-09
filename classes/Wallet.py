@@ -1,7 +1,6 @@
 import os
 import uuid
 import json
-import settings
 
 
 class Wallet:
@@ -12,8 +11,8 @@ class Wallet:
 
     def generate_unique_id(self):
         unique_id = str(uuid.uuid4())
-        #test
-        #unique_id = "b250dd3c-53c7-45a1-93cd-9e8ed3f8881d"
+        # test
+        # unique_id = "b250dd3c-53c7-45a1-93cd-9e8ed3f8881d"
         if os.path.exists("content/wallets/" + unique_id + ".json"):
             self.generate_unique_id()
 
@@ -29,12 +28,25 @@ class Wallet:
 
     def send(self, recepteur, montant, bloc, name):
         bloc.add_transaction(self, recepteur, montant, name)
-        new_transaction = {'emetteur': self.unique_id, 'recepteur': recepteur.unique_id, 'montant': montant, 'name': name}
+        new_transaction = {'emetteur': self.unique_id,
+                           'recepteur': recepteur.unique_id,
+                           'montant': montant,
+                           'name': name}
+        recepteur.history.append(new_transaction)
+        recepteur.save()
         self.history.append(new_transaction)
         self.save()
 
+    def info(self):
+        print("------------------------------------")
+        print("uuid: " + self.unique_id)
+        print("balance: " + str(self.balance))
+        print("history: " + str(self.history))
+        print("------------------------------------")
+
     def save(self):
-        with open("content/wallets/" + self.unique_id + ".json", 'w') as outfile:
+        with open("content/wallets/" + self.unique_id + ".json",
+                  'w') as outfile:
             data = {
                 'unique_id': self.unique_id,
                 'balance': self.balance,
@@ -52,8 +64,11 @@ class Wallet:
             json.dump(data, outfile)
 
     def load(self, unique_id):
-        with open("content/wallets/" + unique_id + ".json") as json_file:
-            data = json.load(json_file)
-            self.unique_id = data['unique_id']
-            self.balance = data['balance']
-            self.history = data['history']
+        if os.path.exists("content/wallets/" + unique_id + ".json"):
+            with open("content/wallets/" + unique_id + ".json") as json_file:
+                data = json.load(json_file)
+                self.unique_id = data['unique_id']
+                self.balance = data['balance']
+                self.history = data['history']
+        else:
+            print("try loading a wallet that doesnt exist")
